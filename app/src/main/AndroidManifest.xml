@@ -13,9 +13,14 @@
         android:theme="@style/Theme.Kotlinsample"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".signup"
+            android:exported="false"
+            android:label="@string/title_activity_signup"
+            android:theme="@style/Theme.Kotlinsample" />
+        <activity
+            android:name=".lololo"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_lololo"
             android:theme="@style/Theme.Kotlinsample">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

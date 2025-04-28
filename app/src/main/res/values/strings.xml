@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">kotlinsample</string>
+    <string name="title_activity_calc">calc</string>
+    <string name="title_activity_task1">task1</string>
+    <string name="title_activity_hawa">hawa</string>
+    <string name="title_activity_card_app_screen">CardAppScreen</string>
+    <string name="title_activity_lololo">lololo</string>
+    <string name="title_activity_signup">signup</string>
 </resources>
