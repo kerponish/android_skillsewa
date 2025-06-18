@@ -14,4 +14,5 @@
     <string name="title_activity_add_product">AddProduct</string>
     <string name="title_activity_get_product">getProduct</string>
     <string name="title_activity_update_product">UpdateProductActivity</string>
+    <string name="title_activity_edit_profile">EditProfile</string>
 </resources>
