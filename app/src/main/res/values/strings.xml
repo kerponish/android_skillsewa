@@ -7,11 +7,14 @@
     <string name="title_activity_lololo">lololo</string>
     <string name="title_activity_signup">signup</string>
     <string name="title_activity_dashboard">Dashboard</string>
-    <string name="title_activity_splash">Splash</string>
+    <string name="title_activity_splash">Skill Sewa</string>
     <string name="title_activity_list_view">ListViewActivity</string>
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="title_activity_forget_password">ForgetPassword</string>
     <string name="title_activity_add_product">AddProduct</string>
     <string name="title_activity_get_product">getProduct</string>
     <string name="title_activity_update_product">UpdateProductActivity</string>
+    <string name="title_activity_edit_profile">EditProfile</string>
+    <string name="title_activity_user_profile">UserProfile</string>
+    <string name="title_activity_view_profile">ViewProfile</string>
 </resources>

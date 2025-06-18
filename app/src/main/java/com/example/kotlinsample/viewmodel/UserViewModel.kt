@@ -24,10 +24,7 @@ class UserViewModel(private val repo: UserRepository) : ViewModel() {
     fun editProfile(userId: String, data: MutableMap<String, Any>, callback: (Boolean, String) -> Unit) {
         repo.editProfile(userId, data, callback)
     }
-
-    fun getCurrentUser(): FirebaseUser? {
-        return repo.getCurrentUser()
-    }
+    
 
     fun addUserToDatabase(userId: String, model: UserModel, callback: (Boolean, String) -> Unit) {
         repo.addUserToDatabase(userId, model, callback)

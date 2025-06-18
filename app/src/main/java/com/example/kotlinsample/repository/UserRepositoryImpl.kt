@@ -82,9 +82,20 @@ class UserRepositoryImpl: UserRepository {
         }
     }
 
-    override fun getCurrentUser(): FirebaseUser? {
-        return auth.currentUser
+    override fun getProfile(
+        userId: String,
+        callback: (Map<String, Any>) -> Unit
+    ) {
+        ref.child(userId).get().addOnSuccessListener {
+            val map = it.value as? Map<String, Any>
+            callback(map ?: emptyMap())
+        }.addOnFailureListener {
+            callback(emptyMap())
+        }
     }
+
+
+
 
     override fun addUserToDatabase(
         userId: String,

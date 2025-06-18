@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.kotlinsample">
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,6 +17,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kotlinsample"
         tools:targetApi="31">
+
+        <activity
+            android:name=".view.UserProfileActivity"
+            android:exported="true"
+            android:label="Edit Profile"
+            android:theme="@style/Theme.Kotlinsample" />
+        <activity
+            android:name=".view.UserProfileViewActivity"
+            android:exported="true"
+            android:label="View User"
+            android:theme="@style/Theme.Kotlinsample" />
+
         <activity
             android:name=".view.UpdateProductActivity"
             android:exported="false"

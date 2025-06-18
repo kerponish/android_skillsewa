@@ -19,7 +19,7 @@ interface UserRepository {
 
 
 
-    fun getCurrentUser( ): FirebaseUser?
+    fun getProfile(userId: String, callback: (Map<String, Any>) -> Unit)
 
 
 

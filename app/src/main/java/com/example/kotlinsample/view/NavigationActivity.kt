@@ -41,6 +41,7 @@ fun NavigationBody() {
     val bottomNavItems = listOf(
         BottomNavItem("Home", Icons.Default.Home),
         BottomNavItem("Search", Icons.Default.Search),
+        BottomNavItem("Profile", Icons.Default.Person)
     )
 
     var selectedIndex by remember { mutableStateOf(0) }
@@ -56,7 +57,7 @@ fun NavigationBody() {
                 title = { Text("Skill Sewa") },
                 actions = {
                     IconButton(onClick = {
-                        // Open AddProductActivity from top bar
+
                         val intent = Intent(context, AddProductActivity::class.java)
                         context.startActivity(intent)
                     }) {
@@ -98,6 +99,14 @@ fun NavigationBody() {
             when (selectedIndex) {
                 0 -> HomeScreen()
                 1 -> SearchScreen()
+                2 -> {
+                    // Launch UserProfileActivity
+                    LaunchedEffect(Unit) {
+                        val intent = Intent(context, UserProfileViewActivity::class.java)
+                        context.startActivity(intent)
+
+                    }
+                }
             }
         }
     }

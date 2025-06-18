@@ -216,6 +216,18 @@ fun SkillsSewaLoginScreen(
                 modifier = Modifier.clickable(onClick = onSignupClick)
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Forgot Password?",
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .clickable {
+                    val intent = Intent(context, ForgetPassword::class.java)
+                    context.startActivity(intent)
+                }
+        )
     }
 }
 
