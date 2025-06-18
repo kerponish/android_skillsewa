@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "251548480846",
+    "firebase_url": "https://propp-c61d5-default-rtdb.firebaseio.com",
+    "project_id": "propp-c61d5",
+    "storage_bucket": "propp-c61d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251548480846:android:77bbf6866b7e29bfcdda1f",
+        "android_client_info": {
+          "package_name": "com.example.kotlinsample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRTJF0mCDev88AjXvHEAND_W0d_uF2WuI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
