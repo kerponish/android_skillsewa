@@ -32,6 +32,8 @@ import com.example.kotlinsample.repository.UserRepositoryImpl
 import com.example.kotlinsample.ui.theme.KotlinsampleTheme
 import com.example.kotlinsample.viewmodel.UserViewModel
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.ui.draw.clip
+import com.google.firebase.auth.FirebaseAuth
 
 class SkillsLoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,12 +66,17 @@ fun SkillsSewaLoginScreen(
     LaunchedEffect(Unit) {
         val savedEmail = sharedPref.getString("email", "") ?: ""
         val savedPassword = sharedPref.getString("password", "") ?: ""
-        if (savedEmail.isNotEmpty() && savedPassword.isNotEmpty()) {
+
+        // Make sure FirebaseAuth does NOT already have a user
+        val rememberMePref = sharedPref.getBoolean("remember_me", false)
+        if (rememberMePref && savedEmail.isNotEmpty() && savedPassword.isNotEmpty())  {
+
             email = savedEmail
             password = savedPassword
             rememberMe = true
             isLoading = true
-            userViewModel.login(email, password) { success, message ->
+
+            userViewModel.login(savedEmail, savedPassword) { success, message ->
                 isLoading = false
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 if (success) {
@@ -87,14 +94,14 @@ fun SkillsSewaLoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(45.dp))
 
-        Text("Skills Sewa", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        Spacer(modifier = Modifier.height(4.dp))
-        Text("“तपाईंको सीप आवश्यक हातमा”", fontSize = 16.sp, color = Color.White)
-        Spacer(modifier = Modifier.height(24.dp))
+        Text("Skills Sewa", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Spacer(modifier = Modifier.height(10.dp))
+        Text("“तपाईंको सीप आवश्यक हातमा”", fontSize = 17.sp, color = Color.White)
+        Spacer(modifier = Modifier.height(28.dp))
         Text("Login", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         OutlinedTextField(
             value = email,
@@ -117,7 +124,7 @@ fun SkillsSewaLoginScreen(
             )
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = password,
@@ -146,7 +153,7 @@ fun SkillsSewaLoginScreen(
                 unfocusedContainerColor = Color(0xFF5A64EA)
             )
         )
-
+        Spacer(modifier = Modifier.height(20.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -178,7 +185,9 @@ fun SkillsSewaLoginScreen(
                         if (success) {
                             if (rememberMe) {
                                 sharedPref.edit().putString("email", email)
-                                    .putString("password", password).apply()
+                                    .putString("password", password)
+                                    .putBoolean("remember_me", true)
+                                    .apply()
                             } else {
                                 sharedPref.edit().clear().apply()
                             }
@@ -187,7 +196,7 @@ fun SkillsSewaLoginScreen(
                     }
                 },
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD60A)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
                 modifier = Modifier
                     .width(180.dp)
                     .height(48.dp)
@@ -202,10 +211,9 @@ fun SkillsSewaLoginScreen(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "Skills Sewa Logo",
             modifier = Modifier
-                .width(150.dp)
-                .height(150.dp)
+                .size(150.dp)
+                .clip(RoundedCornerShape(24.dp)) // increase dp for rounder corners
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Row {

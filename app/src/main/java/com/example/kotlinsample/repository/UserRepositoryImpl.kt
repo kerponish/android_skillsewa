@@ -69,18 +69,19 @@ class UserRepositoryImpl: UserRepository {
 
     override fun editProfile(
         userId: String,
-        data: MutableMap<String, Any>,
+        updateData: Map<String, Any>,
         callback: (Boolean, String) -> Unit
     ) {
-        ref.child(userId).updateChildren(data).addOnCompleteListener {
-            if (it.isSuccessful){
-                callback(true,"edited")
-            }
-            else{
-                callback(false,"${it.exception?.message}")
+        val ref = FirebaseDatabase.getInstance().getReference("users").child(userId)
+        ref.updateChildren(updateData).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(true, "Profile updated successfully")
+            } else {
+                callback(false, task.exception?.message ?: "Failed to update")
             }
         }
     }
+
 
     override fun getProfile(
         userId: String,

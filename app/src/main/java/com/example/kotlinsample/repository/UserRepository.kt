@@ -15,7 +15,11 @@ interface UserRepository {
 
 
 
-    fun editProfile(userId: String,data: MutableMap<String, Any>,callback: (Boolean, String) -> Unit)
+    fun editProfile(
+        userId: String,
+        updateData: Map<String, Any>,
+        callback: (Boolean, String) -> Unit
+    )
 
 
 

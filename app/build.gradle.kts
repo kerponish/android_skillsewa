@@ -52,6 +52,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+
+
+
 
     implementation(libs.androidx.material3)
     implementation(libs.firebase.auth)
@@ -69,4 +74,6 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("io.coil-kt:coil-compose:2.2.2")
+
+
 }

@@ -30,6 +30,11 @@
             android:theme="@style/Theme.Kotlinsample" />
 
         <activity
+            android:name=".view.EditProfile"
+            android:exported="false"
+            android:label="@string/title_activity_edit_profile"
+            android:theme="@style/Theme.Kotlinsample" />
+        <activity
             android:name=".view.UpdateProductActivity"
             android:exported="false"
             android:label="@string/title_activity_update_product"
