@@ -18,85 +18,94 @@
         android:theme="@style/Theme.Kotlinsample"
         tools:targetApi="31">
 
+        <!-- Launcher Activity -->
         <activity
-            android:name=".view.UserProfileActivity"
+            android:name=".view.Splash"
             android:exported="true"
-            android:label="Edit Profile"
-            android:theme="@style/Theme.Kotlinsample" />
+            android:theme="@style/Theme.Kotlinsample">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Login Activity -->
         <activity
-            android:name=".view.UserProfileViewActivity"
-            android:exported="true"
-            android:label="View User"
+            android:name=".view.SkillsLoginActivity"
+            android:exported="false"
+            android:label="Login"
             android:theme="@style/Theme.Kotlinsample" />
 
+        <!-- Signup Activity -->
+        <activity
+            android:name=".view.signup"
+            android:exported="false"
+            android:label="Sign Up"
+            android:theme="@style/Theme.Kotlinsample" />
+
+        <!-- Main Navigation Activity -->
+        <activity
+            android:name=".view.NavigationActivity"
+            android:exported="false"
+            android:label="Navigation"
+            android:theme="@style/Theme.Kotlinsample" />
+
+        <!-- Profile Activity -->
+        <activity
+            android:name=".view.Profile"
+            android:exported="false"
+            android:label="Profile"
+            android:theme="@style/Theme.Kotlinsample" />
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".view.MainActivity"
+            android:exported="false"
+            android:label="Main"
+            android:theme="@style/Theme.Kotlinsample" />
+
+        <!-- User Profile Activity -->
+        <activity
+            android:name=".view.UserProfileActivity"
+            android:exported="false"
+            android:label="Edit Profile"
+            android:theme="@style/Theme.Kotlinsample" />
+
+        <!-- Edit Profile Activity -->
         <activity
             android:name=".view.EditProfile"
             android:exported="false"
             android:label="@string/title_activity_edit_profile"
             android:theme="@style/Theme.Kotlinsample" />
-        <activity
-            android:name=".view.UpdateProductActivity"
-            android:exported="false"
-            android:label="@string/title_activity_update_product"
-            android:theme="@style/Theme.Kotlinsample" />
-        <activity
-            android:name=".view.GetProductsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_get_product"
-            android:theme="@style/Theme.Kotlinsample" /> <!-- Splash Screen - Launcher Activity -->
-        <activity
-            android:name=".view.Splash"
-            android:exported="true"
-            android:label="@string/title_activity_splash"
-            android:theme="@style/Theme.Kotlinsample">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity> <!-- Login Activity -->
-        <activity
-            android:name=".view.SkillsLoginActivity"
-            android:exported="true"
-            android:label="skillslogin"
-            android:theme="@style/Theme.Kotlinsample" /> <!-- Signup Activity -->
-        <activity
-            android:name=".view.signup"
-            android:exported="true"
-            android:label="signup"
-            android:theme="@style/Theme.Kotlinsample" /> <!-- Navigation Activity -->
-        <activity
-            android:name=".view.NavigationActivity"
-            android:exported="true"
-            android:label="@string/title_activity_navigation"
-            android:theme="@style/Theme.Kotlinsample" /> <!-- Add Product Activity -->
-        <activity
-            android:name=".view.AddProductActivity"
-            android:exported="false"
-            android:label="@string/title_activity_add_product"
-            android:theme="@style/Theme.Kotlinsample" />
+        <!-- Add Service Activity -->
         <activity
             android:name=".view.AddServiceActivity"
             android:exported="false"
             android:label="Add Service"
             android:theme="@style/Theme.Kotlinsample" />
 
+        <!-- Update Service Activity -->
         <activity
             android:name=".view.UpdateServiceActivity"
             android:exported="false"
             android:label="Update Service"
             android:theme="@style/Theme.Kotlinsample" />
+
+        <!-- Add Task Activity -->
         <activity
             android:name=".view.AddTaskActivity"
             android:exported="false"
             android:label="Post Task"
             android:theme="@style/Theme.Kotlinsample" />
+
         <!-- Forget Password Activity -->
         <activity
             android:name=".view.ForgetPassword"
             android:exported="false"
             android:label="@string/title_activity_forget_password"
             android:theme="@style/Theme.Kotlinsample" />
+
     </application>
 
 </manifest>

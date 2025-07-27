@@ -1,6 +1,5 @@
 package com.example.kotlinsample.repository
 
-import com.example.kotlinsample.model.Product
 import com.example.kotlinsample.model.UserModel
 import com.google.firebase.auth.FirebaseUser
 

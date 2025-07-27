@@ -1,24 +1,29 @@
 package com.example.kotlinsample.view
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.kotlinsample.view.pages.HomeScreen
 import com.example.kotlinsample.view.pages.SearchScreen
-import com.example.kotlinsample.repository.ProductResImpl
 
 class NavigationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,37 +41,38 @@ data class BottomNavItem(val label: String, val icon: ImageVector)
 @Composable
 fun NavigationBody() {
     val context = LocalContext.current
-    val repo = remember { ProductResImpl() } // for future use if needed
+    val inPreview = LocalInspectionMode.current
 
+    // Bottom Navigation Items
     val bottomNavItems = listOf(
         BottomNavItem("Home", Icons.Default.Home),
         BottomNavItem("Search", Icons.Default.Search),
         BottomNavItem("Profile", Icons.Default.Person)
     )
 
-    var selectedIndex by remember { mutableStateOf(0) }
+    var selectedIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
+                title = { Text("Skill Sewa") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Optional back logic */ }) {
-                        Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Back")
+                    IconButton(onClick = { /* Handle back */ }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Back"
+                        )
                     }
                 },
-                title = { Text("Skill Sewa") },
                 actions = {
                     IconButton(onClick = {
-                        val intent = Intent(context, AddProductActivity::class.java)
-                        context.startActivity(intent)
+                        if (!inPreview) {
+                            val intent = Intent(context, AddServiceActivity::class.java)
+                            context.startActivity(intent)
+                        }
                     }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Product")
-                    }
-                    IconButton(onClick = {
-                        val intent = Intent(context, AddServiceActivity::class.java)
-                        context.startActivity(intent)
-                    }) {
-                        Icon(Icons.Default.Build, contentDescription = "Add Service")
+                        Icon(Icons.Filled.Build, contentDescription = "Add Service")
+
                     }
                 }
             )
@@ -82,18 +88,7 @@ fun NavigationBody() {
                     )
                 }
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val intent = Intent(context, GetProductsActivity::class.java)
-                    context.startActivity(intent)
-                }
-            ) {
-                Icon(Icons.Default.List, contentDescription = "Get All Products")
-            }
-        },
-        floatingActionButtonPosition = androidx.compose.material3.FabPosition.End
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -104,16 +99,27 @@ fun NavigationBody() {
             when (selectedIndex) {
                 0 -> HomeScreen()
                 1 -> SearchScreen()
-                2 -> {
-                    // Launch UserProfileActivity
-                    LaunchedEffect(Unit) {
-                        val intent = Intent(context, UserProfileViewActivity::class.java)
-                        context.startActivity(intent)
-
-                    }
-                }
+                2 -> ProfileNavigationHandler()
             }
         }
+    }
+}
+
+/**
+ * Handles navigation to Profile Activity in a Composable-safe way
+ */
+@Composable
+fun ProfileNavigationHandler() {
+    val context = LocalContext.current
+    val inPreview = LocalInspectionMode.current
+
+    if (!inPreview) {
+        LaunchedEffect(Unit) {
+            val intent = Intent(context, Profile::class.java)
+            context.startActivity(intent)
+        }
+    } else {
+        Text("Profile Screen (Preview)")
     }
 }
 
