@@ -19,8 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.kotlinsample.model.Task
-import com.example.kotlinsample.repository.TaskResImpl
 import com.example.kotlinsample.view.AddTaskActivity
 import java.text.SimpleDateFormat
 import java.util.*

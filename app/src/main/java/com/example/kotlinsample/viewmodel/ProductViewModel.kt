@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.kotlinsample.model.Product
-import com.example.kotlinsample.repository.ProductRes
 
 class ProductViewModel(private val repo: ProductRes) : ViewModel() {
 

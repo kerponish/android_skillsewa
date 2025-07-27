@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.kotlinsample.view.pages.HomeScreen
 import com.example.kotlinsample.view.pages.SearchScreen
-import com.example.kotlinsample.repository.ProductResImpl
 
 class NavigationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

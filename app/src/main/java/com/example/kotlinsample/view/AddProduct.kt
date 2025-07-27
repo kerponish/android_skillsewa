@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.kotlinsample.model.Product
-import com.example.kotlinsample.repository.ProductResImpl
 import com.example.kotlinsample.ui.theme.KotlinsampleTheme
 
 class AddProductActivity : ComponentActivity() {
