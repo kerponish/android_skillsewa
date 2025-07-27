@@ -8,6 +8,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,9 +50,11 @@ fun EditUserProfileScreen() {
     val repo = remember { UserRepositoryImpl() }
 
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    val currentUser = FirebaseAuth.getInstance().currentUser
 
     var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("hello@reallygreatsite.com") }
+    var email by remember { mutableStateOf(currentUser?.email ?: "") }
+    var password by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("Select") }
 
     val calendar = Calendar.getInstance()
@@ -83,7 +90,18 @@ fun EditUserProfileScreen() {
             RoundedInputField(value = name, onValueChange = { name = it })
 
             LabelText("Email")
-            RoundedInputField(value = email, onValueChange = { email = it })
+            RoundedInputField(
+                value = email, 
+                onValueChange = { }, 
+                readOnly = true
+            )
+
+            LabelText("Password")
+            RoundedInputField(
+                value = password, 
+                onValueChange = { password = it },
+                isPassword = true
+            )
 
             LabelText("Date of Birth")
             RoundedInputField(
@@ -101,11 +119,17 @@ fun EditUserProfileScreen() {
                     return@Button
                 }
 
-                val userMap = mutableMapOf<String, Any>(
-                    "name" to name,
-                    "email" to email,
-                    "dob" to dateOfBirth
-                )
+                val userMap = mutableMapOf<String, Any>()
+                
+                if (name.isNotBlank()) {
+                    userMap["name"] = name
+                }
+                if (password.isNotBlank()) {
+                    userMap["password"] = password
+                }
+                if (dateOfBirth != "Select") {
+                    userMap["dob"] = dateOfBirth
+                }
 
                 repo.editProfile(userId, userMap) { success, message ->
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -138,8 +162,11 @@ fun RoundedInputField(
     value: String,
     onValueChange: (String) -> Unit,
     readOnly: Boolean = false,
+    isPassword: Boolean = false,
     onClick: (() -> Unit)? = null
 ) {
+    var passwordVisible by remember { mutableStateOf(false) }
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -156,9 +183,27 @@ fun RoundedInputField(
             enabled = true,
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             textStyle = TextStyle(fontSize = 14.sp),
+            visualTransformation = if (isPassword && !passwordVisible) {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
+            },
+            trailingIcon = if (isPassword) {
+                {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) {
+                                Icons.Default.Visibility
+                            } else {
+                                Icons.Default.VisibilityOff
+                            },
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                        )
+                    }
+                }
+            } else null,
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.White,
                 focusedContainerColor = Color.White,

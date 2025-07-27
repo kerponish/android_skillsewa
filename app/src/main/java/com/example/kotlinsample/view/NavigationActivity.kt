@@ -57,11 +57,16 @@ fun NavigationBody() {
                 title = { Text("Skill Sewa") },
                 actions = {
                     IconButton(onClick = {
-
                         val intent = Intent(context, AddProductActivity::class.java)
                         context.startActivity(intent)
                     }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Product")
+                    }
+                    IconButton(onClick = {
+                        val intent = Intent(context, AddServiceActivity::class.java)
+                        context.startActivity(intent)
+                    }) {
+                        Icon(Icons.Default.Build, contentDescription = "Add Service")
                     }
                 }
             )
@@ -81,14 +86,14 @@ fun NavigationBody() {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    // Open GetProductsActivity when FAB clicked
                     val intent = Intent(context, GetProductsActivity::class.java)
                     context.startActivity(intent)
                 }
             ) {
                 Icon(Icons.Default.List, contentDescription = "Get All Products")
             }
-        }
+        },
+        floatingActionButtonPosition = androidx.compose.material3.FabPosition.End
     ) { innerPadding ->
         Box(
             modifier = Modifier

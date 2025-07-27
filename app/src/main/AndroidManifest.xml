@@ -74,7 +74,24 @@
             android:name=".view.AddProductActivity"
             android:exported="false"
             android:label="@string/title_activity_add_product"
-            android:theme="@style/Theme.Kotlinsample" /> <!-- Forget Password Activity -->
+            android:theme="@style/Theme.Kotlinsample" />
+        <activity
+            android:name=".view.AddServiceActivity"
+            android:exported="false"
+            android:label="Add Service"
+            android:theme="@style/Theme.Kotlinsample" />
+
+        <activity
+            android:name=".view.UpdateServiceActivity"
+            android:exported="false"
+            android:label="Update Service"
+            android:theme="@style/Theme.Kotlinsample" />
+        <activity
+            android:name=".view.AddTaskActivity"
+            android:exported="false"
+            android:label="Post Task"
+            android:theme="@style/Theme.Kotlinsample" />
+        <!-- Forget Password Activity -->
         <activity
             android:name=".view.ForgetPassword"
             android:exported="false"
