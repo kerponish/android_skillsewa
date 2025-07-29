@@ -135,7 +135,7 @@ fun SignUpScreen() {
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password", color = Color.Black) },
+                    label = { Text("Password", color = Color.White) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
