@@ -121,7 +121,7 @@ fun ProfileScre() {
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = "Profile Picture",
-                                modifier = Modifier.size(40.dp),
+                                modifier = Modifier.size(36.dp),
                                 tint = Color(0xFF1976D2)
                             )
                         }
