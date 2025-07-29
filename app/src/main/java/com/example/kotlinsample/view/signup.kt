@@ -29,6 +29,7 @@ import com.example.kotlinsample.repository.UserRepositoryImpl
 import com.example.kotlinsample.ui.theme.KotlinsampleTheme
 import com.example.kotlinsample.viewmodel.UserViewModel
 import java.util.*
+import com.example.kotlinsample.view.SkillsLoginActivity
 
 class signup : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -209,7 +210,14 @@ fun SignUpScreen() {
                                     gender = gender
                                 )
                                 userViewModel.addUserToDatabase(userId, user) { successDb, messageDb ->
-                                    Toast.makeText(context, messageDb, Toast.LENGTH_SHORT).show()
+                                    if (successDb) {
+                                        Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
+                                        val intent = android.content.Intent(context, SkillsLoginActivity::class.java)
+                                        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                        context.startActivity(intent)
+                                    } else {
+                                        Toast.makeText(context, messageDb, Toast.LENGTH_SHORT).show()
+                                    }
                                 }
                             } else {
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
