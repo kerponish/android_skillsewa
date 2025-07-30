@@ -48,5 +48,15 @@ interface UserRepository {
 
     fun getAllUsers( callback: (Boolean, String, List<UserModel>) -> Unit)
 
+    fun uploadProfilePicture(
+        userId: String,
+        imageUri: String,
+        callback: (Boolean, String, String?) -> Unit
+    )
 
+    fun updateProfilePicture(
+        userId: String,
+        imageUrl: String,
+        callback: (Boolean, String) -> Unit
+    )
 }

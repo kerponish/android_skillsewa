@@ -5,5 +5,6 @@ data class UserModel(
     val email: String = "",
     val password: String = "",
     val dob: String = "",
-    val gender: String = ""
+    val gender: String = "",
+    val profilePicture: String = "" // URL or path to profile picture
 )

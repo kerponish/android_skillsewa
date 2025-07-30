@@ -60,6 +60,7 @@ dependencies {
     // Firebase
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 
     // Testing
     testImplementation(libs.junit)
@@ -75,4 +76,5 @@ dependencies {
     // Image loading
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 }

@@ -64,19 +64,6 @@
             android:label="Main"
             android:theme="@style/Theme.Kotlinsample" />
 
-        <!-- User Profile Activity -->
-        <activity
-            android:name=".view.UserProfileActivity"
-            android:exported="false"
-            android:label="Edit Profile"
-            android:theme="@style/Theme.Kotlinsample" />
-
-        <!-- Edit Profile Activity -->
-        <activity
-            android:name=".view.EditProfile"
-            android:exported="false"
-            android:label="@string/title_activity_edit_profile"
-            android:theme="@style/Theme.Kotlinsample" />
 
         <!-- Add Service Activity -->
         <activity
@@ -90,13 +77,6 @@
             android:name=".view.UpdateServiceActivity"
             android:exported="false"
             android:label="Update Service"
-            android:theme="@style/Theme.Kotlinsample" />
-
-        <!-- Add Task Activity -->
-        <activity
-            android:name=".view.AddTaskActivity"
-            android:exported="false"
-            android:label="Post Task"
             android:theme="@style/Theme.Kotlinsample" />
 
         <!-- Forget Password Activity -->

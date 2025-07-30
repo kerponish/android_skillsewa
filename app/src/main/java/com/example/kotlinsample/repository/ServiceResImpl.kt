@@ -1,5 +1,6 @@
 package com.example.kotlinsample.repository
 
+import com.example.kotlinsample.model.Comment
 import com.example.kotlinsample.model.Service
 import com.google.firebase.database.*
 
@@ -63,15 +64,20 @@ class ServiceResImpl : ServiceRes {
                 println("DEBUG: ServiceResImpl - Snapshot exists: ${snapshot.exists()}")
                 println("DEBUG: ServiceResImpl - Snapshot children count: ${snapshot.childrenCount}")
                 
-                val list = snapshot.children.mapNotNull { childSnapshot ->
-                    println("DEBUG: ServiceResImpl - Processing child: ${childSnapshot.key}")
-                    val service = childSnapshot.getValue(Service::class.java)
-                    if (service != null) {
-                        println("DEBUG: ServiceResImpl - Successfully parsed service: ${service.serviceName}")
-                    } else {
-                        println("DEBUG: ServiceResImpl - Failed to parse service from child: ${childSnapshot.key}")
+                val list = mutableListOf<Service>()
+                for (childSnapshot in snapshot.children) {
+                    try {
+                        println("DEBUG: ServiceResImpl - Processing child: ${childSnapshot.key}")
+                        val service = childSnapshot.getValue(Service::class.java)
+                        if (service != null) {
+                            println("DEBUG: ServiceResImpl - Successfully parsed service: ${service.serviceName}")
+                            list.add(service)
+                        } else {
+                            println("DEBUG: ServiceResImpl - Failed to parse service from child: ${childSnapshot.key}")
+                        }
+                    } catch (e: Exception) {
+                        println("DEBUG: ServiceResImpl - Skipping non-service node: ${childSnapshot.key}, error: ${e.message}")
                     }
-                    service
                 }
                 println("DEBUG: ServiceResImpl - Final list size: ${list.size}")
                 callback(true, "Services fetched", list)
@@ -88,7 +94,17 @@ class ServiceResImpl : ServiceRes {
         ref.orderByChild("professionalType").equalTo(professionalType)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = snapshot.children.mapNotNull { it.getValue(Service::class.java) }
+                    val list = mutableListOf<Service>()
+                    for (childSnapshot in snapshot.children) {
+                        try {
+                            val service = childSnapshot.getValue(Service::class.java)
+                            if (service != null) {
+                                list.add(service)
+                            }
+                        } catch (e: Exception) {
+                            println("DEBUG: ServiceResImpl - Skipping non-service node in getServicesByProfessionalType: ${childSnapshot.key}, error: ${e.message}")
+                        }
+                    }
                     callback(true, "Services fetched by type", list)
                 }
 
@@ -96,6 +112,116 @@ class ServiceResImpl : ServiceRes {
                     callback(false, error.message, emptyList())
                 }
             })
+    }
+
+    override fun getServicesByUserId(userId: String, callback: (Boolean, String, List<Service?>) -> Unit) {
+        ref.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<Service>()
+                    for (childSnapshot in snapshot.children) {
+                        try {
+                            val service = childSnapshot.getValue(Service::class.java)
+                            if (service != null) {
+                                list.add(service)
+                            }
+                        } catch (e: Exception) {
+                            println("DEBUG: ServiceResImpl - Skipping non-service node in getServicesByUserId: ${childSnapshot.key}, error: ${e.message}")
+                        }
+                    }
+                    callback(true, "User's services fetched", list)
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    callback(false, error.message, emptyList())
+                }
+            })
+    }
+
+    override fun editService(serviceId: String, updatedService: Service, callback: (Boolean, String) -> Unit) {
+        ref.child(serviceId).setValue(updatedService).addOnCompleteListener {
+            if (it.isSuccessful) callback(true, "Service updated successfully")
+            else callback(false, it.exception?.message ?: "Failed to update service")
+        }
+    }
+
+    override fun likeService(serviceId: String, userId: String, callback: (Boolean, String) -> Unit) {
+        ref.child(serviceId).child("likes").get().addOnSuccessListener { snapshot ->
+            val currentLikes = snapshot.getValue(object : com.google.firebase.database.GenericTypeIndicator<List<String>>() {}) ?: emptyList()
+            val updatedLikes = if (userId in currentLikes) currentLikes else currentLikes + userId
+            
+            ref.child(serviceId).child("likes").setValue(updatedLikes).addOnCompleteListener {
+                if (it.isSuccessful) callback(true, "Service liked successfully")
+                else callback(false, it.exception?.message ?: "Failed to like service")
+            }
+        }.addOnFailureListener {
+            callback(false, it.message ?: "Failed to like service")
+        }
+    }
+
+    override fun unlikeService(serviceId: String, userId: String, callback: (Boolean, String) -> Unit) {
+        ref.child(serviceId).child("likes").get().addOnSuccessListener { snapshot ->
+            val currentLikes = snapshot.getValue(object : com.google.firebase.database.GenericTypeIndicator<List<String>>() {}) ?: emptyList()
+            val updatedLikes = currentLikes.filter { it != userId }
+            
+            ref.child(serviceId).child("likes").setValue(updatedLikes).addOnCompleteListener {
+                if (it.isSuccessful) callback(true, "Service unliked successfully")
+                else callback(false, it.exception?.message ?: "Failed to unlike service")
+            }
+        }.addOnFailureListener {
+            callback(false, it.message ?: "Failed to unlike service")
+        }
+    }
+
+    override fun addComment(
+        serviceId: String,
+        comment: Comment,
+        callback: (Boolean, String) -> Unit
+    ) {
+        val commentId = ref.child(serviceId).child("comments").push().key ?: return callback(false, "Failed to generate comment ID")
+        comment.commentId = commentId
+
+        ref.child(serviceId).child("comments").child(commentId).setValue(comment).addOnCompleteListener {
+            if (it.isSuccessful) callback(true, "Comment added successfully")
+            else callback(false, it.exception?.message ?: "Failed to add comment")
+        }
+    }
+
+
+
+    override fun deleteComment(serviceId: String, commentId: String, callback: (Boolean, String) -> Unit) {
+        ref.child(serviceId).child("comments").child(commentId).removeValue().addOnCompleteListener {
+            if (it.isSuccessful) callback(true, "Comment deleted successfully")
+            else callback(false, it.exception?.message ?: "Failed to delete comment")
+        }
+    }
+
+    override fun markAsInterested(serviceId: String, userId: String, posterId: String, callback: (Boolean, String) -> Unit) {
+        ref.child(serviceId).child("interested").get().addOnSuccessListener { snapshot ->
+            val currentInterested = snapshot.getValue(object : com.google.firebase.database.GenericTypeIndicator<List<String>>() {}) ?: emptyList()
+            if (userId in currentInterested) {
+                callback(false, "Already marked as interested")
+                return@addOnSuccessListener
+            }
+            val updatedInterested = currentInterested + userId
+            ref.child(serviceId).child("interested").setValue(updatedInterested).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    // Add notification for the poster
+                    val notificationRef = database.reference.child("notifications").child(posterId).push()
+                    val notificationData = mapOf(
+                        "type" to "interested",
+                        "serviceId" to serviceId,
+                        "fromUserId" to userId,
+                        "timestamp" to System.currentTimeMillis()
+                    )
+                    notificationRef.setValue(notificationData)
+                    callback(true, "Marked as interested. Poster will be notified in real time.")
+                } else {
+                    callback(false, it.exception?.message ?: "Failed to mark as interested")
+                }
+            }
+        }.addOnFailureListener {
+            callback(false, it.message ?: "Failed to mark as interested")
+        }
     }
 
     // Test function to check Firebase connectivity

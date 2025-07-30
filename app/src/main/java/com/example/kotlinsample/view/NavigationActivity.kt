@@ -40,69 +40,7 @@ data class BottomNavItem(val label: String, val icon: ImageVector)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationBody() {
-    val context = LocalContext.current
-    val inPreview = LocalInspectionMode.current
-
-    // Bottom Navigation Items
-    val bottomNavItems = listOf(
-        BottomNavItem("Home", Icons.Default.Home),
-        BottomNavItem("Search", Icons.Default.Search),
-        BottomNavItem("Profile", Icons.Default.Person)
-    )
-
-    var selectedIndex by remember { mutableIntStateOf(0) }
-
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Skill Sewa") },
-                navigationIcon = {
-                    IconButton(onClick = { /* Handle back */ }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        if (!inPreview) {
-                            val intent = Intent(context, AddServiceActivity::class.java)
-                            context.startActivity(intent)
-                        }
-                    }) {
-                        Icon(Icons.Filled.Build, contentDescription = "Add Service")
-
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            NavigationBar {
-                bottomNavItems.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        label = { Text(item.label) },
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            when (selectedIndex) {
-                0 -> HomeScreen()
-                1 -> SearchScreen()
-                2 -> ProfileNavigationHandler()
-            }
-        }
-    }
+    HomeScreen()
 }
 
 /**
