@@ -193,7 +193,7 @@ fun HomeTabContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(17.dp),
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         if (isLoading) {
