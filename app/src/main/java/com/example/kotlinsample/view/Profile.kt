@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -83,176 +84,179 @@ fun ProfileScre() {
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF1F1F1))
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Profile Card
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(24.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // Avatar
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFE0E0E0)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile Picture",
-                                modifier = Modifier.size(36.dp),
-                                tint = Color(0xFF1976D2)
-                            )
-                        }
-                        // Name
-                        Text(
-                            text = name.ifBlank { "No Name" },
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF222222)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("My Profile") },
+                navigationIcon = {
+                    IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
                         )
-                        // Email
-                        Text(
-                            text = email,
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                        // DOB & Gender
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("DOB", fontSize = 12.sp, color = Color.Gray)
-                                Text(dateOfBirth, fontSize = 14.sp, color = Color(0xFF1976D2))
-                            }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("Gender", fontSize = 12.sp, color = Color.Gray)
-                                Text(gender.ifBlank { "-" }, fontSize = 14.sp, color = Color(0xFF1976D2))
-                            }
-                        }
-                        // Edit Button
-                        if (!isEditMode) {
-                            OutlinedButton(
-                                onClick = { isEditMode = true },
-                                modifier = Modifier.padding(top = 12.dp),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Icon(Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Edit Profile")
-                            }
-                        }
                     }
                 }
-                // Edit Mode
-                if (isEditMode) {
+            )
+        }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF1F1F1))
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Profile Card
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(20.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            modifier = Modifier.padding(24.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            OutlinedTextField(
-                                value = name,
-                                onValueChange = { name = it },
-                                label = { Text("Full Name") },
-                                modifier = Modifier.fillMaxWidth()
+                            // Name
+                            Text(
+                                text = name.ifBlank { "No Name" },
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF222222)
                             )
-                            OutlinedTextField(
-                                value = dateOfBirth,
-                                onValueChange = {},
-                                label = { Text("Date of Birth") },
-                                readOnly = true,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { datePicker.show() }
+                            // Email
+                            Text(
+                                text = email,
+                                fontSize = 14.sp,
+                                color = Color.Gray
                             )
-                            // Gender Dropdown
-                            var genderExpanded by remember { mutableStateOf(false) }
-                            val genderOptions = listOf("Male", "Female", "Other")
-                            ExposedDropdownMenuBox(
-                                expanded = genderExpanded,
-                                onExpandedChange = { genderExpanded = !genderExpanded },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                OutlinedTextField(
-                                    value = gender,
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    label = { Text("Gender") },
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = genderExpanded) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-                                ExposedDropdownMenu(
-                                    expanded = genderExpanded,
-                                    onDismissRequest = { genderExpanded = false }
-                                ) {
-                                    genderOptions.forEach { option ->
-                                        DropdownMenuItem(
-                                            text = { Text(option) },
-                                            onClick = {
-                                                gender = option
-                                                genderExpanded = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                            // DOB & Gender
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                OutlinedButton(
-                                    onClick = { isEditMode = false },
-                                    shape = RoundedCornerShape(8.dp)
-                                ) {
-                                    Text("Cancel")
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("DOB", fontSize = 12.sp, color = Color.Gray)
+                                    Text(dateOfBirth, fontSize = 14.sp, color = Color(0xFF1976D2))
                                 }
-                                Button(
-                                    onClick = {
-                                        if (userId.isEmpty()) {
-                                            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
-                                            return@Button
-                                        }
-                                        val userMap = mutableMapOf<String, Any>()
-                                        if (name.isNotBlank()) userMap["name"] = name
-                                        if (dateOfBirth != "Select") userMap["dob"] = dateOfBirth
-                                        if (gender.isNotBlank()) userMap["gender"] = gender
-                                        repo.editProfile(userId, userMap) { success, message ->
-                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                            if (success) isEditMode = false
-                                        }
-                                    },
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Gender", fontSize = 12.sp, color = Color.Gray)
+                                    Text(gender.ifBlank { "-" }, fontSize = 14.sp, color = Color(0xFF1976D2))
+                                }
+                            }
+                            // Edit Button
+                            if (!isEditMode) {
+                                OutlinedButton(
+                                    onClick = { isEditMode = true },
+                                    modifier = Modifier.padding(top = 12.dp),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Text("Save")
+                                    Icon(Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Edit Profile")
+                                }
+                            }
+                        }
+                    }
+                    // Edit Mode
+                    if (isEditMode) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(20.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = name,
+                                    onValueChange = { name = it },
+                                    label = { Text("Full Name") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                OutlinedTextField(
+                                    value = dateOfBirth,
+                                    onValueChange = {},
+                                    label = { Text("Date of Birth") },
+                                    readOnly = true,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable { datePicker.show() }
+                                )
+                                // Gender Dropdown
+                                var genderExpanded by remember { mutableStateOf(false) }
+                                val genderOptions = listOf("Male", "Female", "Other")
+                                ExposedDropdownMenuBox(
+                                    expanded = genderExpanded,
+                                    onExpandedChange = { genderExpanded = !genderExpanded },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    OutlinedTextField(
+                                        value = gender,
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        label = { Text("Gender") },
+                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = genderExpanded) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = genderExpanded,
+                                        onDismissRequest = { genderExpanded = false }
+                                    ) {
+                                        genderOptions.forEach { option ->
+                                            DropdownMenuItem(
+                                                text = { Text(option) },
+                                                onClick = {
+                                                    gender = option
+                                                    genderExpanded = false
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    OutlinedButton(
+                                        onClick = { isEditMode = false },
+                                        shape = RoundedCornerShape(8.dp)
+                                    ) {
+                                        Text("Cancel")
+                                    }
+                                    Button(
+                                        onClick = {
+                                            if (userId.isEmpty()) {
+                                                Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
+                                                return@Button
+                                            }
+                                            val userMap = mutableMapOf<String, Any>()
+                                            if (name.isNotBlank()) userMap["name"] = name
+                                            if (dateOfBirth != "Select") userMap["dob"] = dateOfBirth
+                                            if (gender.isNotBlank()) userMap["gender"] = gender
+                                            repo.editProfile(userId, userMap) { success, message ->
+                                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                if (success) isEditMode = false
+                                            }
+                                        },
+                                        shape = RoundedCornerShape(8.dp)
+                                    ) {
+                                        Text("Save")
+                                    }
                                 }
                             }
                         }

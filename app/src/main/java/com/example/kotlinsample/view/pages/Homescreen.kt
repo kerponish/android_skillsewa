@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,6 +41,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.material.icons.filled.Notifications
 import com.google.firebase.database.*
+import com.example.kotlinsample.view.SkillsLoginActivity
 
 class HomeScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,11 +57,10 @@ class HomeScreenActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    var selectedTab by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val snackbarHostState = remember { SnackbarHostState() }
-    var notificationCount by remember { mutableStateOf(0) }
+    var notificationCount by remember { mutableIntStateOf(0) }
     var notifications by remember { mutableStateOf(listOf<Map<String, Any>>()) }
     var showNotificationMenu by remember { mutableStateOf(false) }
 
@@ -102,10 +103,10 @@ fun HomeScreen() {
                                 if (notifications.isEmpty()) {
                                     DropdownMenuItem(text = { Text("No notifications") }, onClick = { })
                                 } else {
-                                    notifications.take(10).forEach { notif ->
-                                        val type = notif["type"] as? String ?: ""
-                                        val fromUserId = notif["fromUserId"] as? String ?: ""
-                                        val serviceId = notif["serviceId"] as? String ?: ""
+                                    notifications.take(10).forEach { notification ->
+                                        val type = notification["type"] as? String ?: ""
+                                        val fromUserId = notification["fromUserId"] as? String ?: ""
+                                        val serviceId = notification["serviceId"] as? String ?: ""
                                         DropdownMenuItem(
                                             text = { Text("$type from $fromUserId") },
                                             onClick = { showNotificationMenu = false }
@@ -115,63 +116,44 @@ fun HomeScreen() {
                             }
                         }
                     }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            // Logout functionality
+                            FirebaseAuth.getInstance().signOut()
+                            val intent = Intent(context, SkillsLoginActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            context.startActivity(intent)
+                        }
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = "Logout",
+                            tint = Color.Red
+                        )
+                    }
                 }
             )
         },
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") },
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                    label = { Text("Search") },
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
-                    label = { Text("Add") },
-                    selected = selectedTab == 2,
-                    onClick = {
-                        context.startActivity(Intent(context, AddServiceActivity::class.java))
-                    }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.History, contentDescription = "History") },
-                    label = { Text("My Services") },
-                    selected = selectedTab == 3,
-                    onClick = { selectedTab = 3 }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                    label = { Text("Profile") },
-                    selected = selectedTab == 4,
-                    onClick = { selectedTab = 4 }
-                )
-            }
-        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
-        when (selectedTab) {
-            0 -> HomeTabContent(
-                padding = padding,
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Services Content
+            HomeTabContent(
                 currentUserId = currentUserId,
                 snackbarHostState = snackbarHostState
             )
-            1 -> SearchScreen()
-            3 -> HistoryScr(userId = currentUserId)
-            4 -> ProfileScr()
         }
     }
 }
 
 @Composable
 fun HomeTabContent(
-    padding: PaddingValues,
     currentUserId: String,
     snackbarHostState: SnackbarHostState
 ) {
@@ -181,9 +163,8 @@ fun HomeTabContent(
     val statusMessage by viewModel.statusMessage.observeAsState("")
     var isLoading by remember { mutableStateOf(true) }
 
-    // Change this effect to depend on selectedTab
-    val selectedTab = 0 // HomeTabContent is only called when selectedTab == 0
-    LaunchedEffect(selectedTab) {
+    // Load all services on component mount
+    LaunchedEffect(Unit) {
         viewModel.getAllServices()
         isLoading = false
     }
@@ -212,8 +193,7 @@ fun HomeTabContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(padding)
-            .padding(16.dp),
+            .padding(17.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         if (isLoading) {
@@ -226,8 +206,8 @@ fun HomeTabContent(
                 }
             }
         } else {
-            val filteredServices = serviceList.filterNotNull().filter { it.serviceId.isNotBlank() }
-            items(filteredServices, key = { it.serviceId }) { service ->
+            val allServices = serviceList.filterNotNull().filter { it.serviceId.isNotBlank() }
+            items(allServices, key = { it.serviceId }) { service ->
                 ServiceCard(
                     service = service,
                     currentUserId = currentUserId,
@@ -246,10 +226,10 @@ fun ServiceCard(
     viewModel: ServiceViewModel,
     snackbarHostState: SnackbarHostState
 ) {
-    val context = LocalContext.current // Fixed: Added missing context
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isLiked by remember { mutableStateOf(service.likes.contains(currentUserId)) }
-    var likeCount by remember { mutableStateOf(service.likes.size) }
+    var likeCount by remember { mutableIntStateOf(service.likes.size) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -285,7 +265,7 @@ fun ServiceCard(
                                 text = { Text("Edit") },
                                 onClick = {
                                     showOptions = false
-                                    val intent = Intent(context, UpdateServiceActivity::class.java) // Fixed: changed 'conte' to 'context'
+                                    val intent = Intent(context, UpdateServiceActivity::class.java)
                                     intent.putExtra("serviceId", service.serviceId)
                                     context.startActivity(intent)
                                 }
@@ -349,7 +329,7 @@ fun ServiceCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    // Like (keep existing like logic)
+                    // Like
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
                             onClick = {
@@ -411,7 +391,7 @@ fun CommentCard(
             ) {
                 Text(comment.userName, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                 val formattedTimestamp = remember(comment.timestamp) {
-                    SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault()).format(Date(comment.timestamp)) // Fixed: Removed java.text and java.util prefixes
+                    SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault()).format(Date(comment.timestamp))
                 }
                 Text(formattedTimestamp, fontSize = 10.sp, color = Color.Gray)
             }
@@ -430,26 +410,4 @@ fun CommentCard(
         }
     }
     Spacer(modifier = Modifier.height(4.dp))
-}
-
-@Composable
-fun SearchScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Search Screen")
-    }
-}
-
-// Placeholder composables for missing functions
-@Composable
-fun HistoryScreen(userId: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("History Screen for user: $userId")
-    }
-}
-
-@Composable
-fun ProfilePage() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Profile Page")
-    }
 }
